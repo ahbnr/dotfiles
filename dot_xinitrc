@@ -69,7 +69,7 @@ case $session in
                         ~/Documents/Projects/slstatus/slstatus/slstatus &
                         ~/Documents/Projects/Shell/battery-check.sh &
                         feh --bg-scale ~/Pictures/Wallpaper/gruv0.jpg
-                        exec ~/Documents/Projects/dwm/dwm/dwm 2> ~/.dwm.log
+                        exec ~/Documents/Projects/dwm/dwm 2> ~/.dwm.log
                         ;;
     # No known session, try to run it as command
     *                 ) exec $1;;
