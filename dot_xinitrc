@@ -1,0 +1,76 @@
+#!/bin/sh
+
+# Disabled user .Xresources for now
+# Don't forget to reenable script sections below, if
+# it should be enabled again
+
+#userresources=$HOME/.Xresources
+#usermodmap=$HOME/.Xmodmap
+
+sysresources=/etc/X11/xinit/.Xresources
+sysmodmap=/etc/X11/xinit/.Xmodmap
+
+# merge in defaults and keymaps
+
+if [ -f $sysresources ]; then
+    xrdb -merge $sysresources
+fi
+
+if [ -f $sysmodmap ]; then
+    xmodmap $sysmodmap
+fi
+
+#if [ -f "$userresources" ]; then
+#    xrdb -merge "$userresources"
+#fi
+
+# Allow user modmap, to get rid of CapsLock
+if [ -f "$usermodmap" ]; then
+    xmodmap "$usermodmap"
+fi
+
+
+# start graphical programs
+if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+ for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+  [ -x "$f" ] && . "$f"
+ done
+ unset f
+fi
+
+# Automatic DPI scaling of Qt applications seems never to work correctly.
+# Therefore I am disabling it:
+export QT_AUTO_SCREEN_SCALE_FACTOR=0
+
+# Activate autolock
+# Autolock and sleep after 10 minutes of inactivity
+# ...by calling slock and instructing systemd to suspend.
+# Base script stolen from here: http://rabexc.org/posts/awesome-xautolock-battery
+# Früher oder später evtl. durch xss-lock ersetzen / ergänzen
+xautolock -detectsleep \
+  -time 10 -locker "slock systemctl suspend -i" \
+  -notify 30 \
+  -notifier "notify-send -u critical -t 10000 -- 'LOCKING screen in 30 sec'" &
+
+# Replace Capslock with Escape
+setxkbmap -option caps:escape
+
+# Setup multiple monitors automatically
+xrandr --output HDMI-1 --off --output DP-1 --auto --above eDP-1 --output eDP-1 --auto
+# Touchscreen and pen only on one screen, dont extend when using a monitor
+xinput --map-to-output 'Atmel Atmel maXTouch Digitizer' eDP-1
+xinput --map-to-output 'MICROSOFT SAM Pen (0)' eDP-1
+
+# replace xinit process with window manager (dwm)
+session=${1:-dwm}
+
+case $session in
+    dwm               ) export _JAVA_AWT_WM_NONREPARENTING=1 # Fix displaying Java applications
+                        ~/Documents/Projects/slstatus/slstatus/slstatus &
+                        ~/Documents/Projects/Shell/battery-check.sh &
+                        feh --bg-scale ~/Pictures/Wallpaper/gruv0.jpg
+                        exec ~/Documents/Projects/dwm/dwm/dwm 2> ~/.dwm.log
+                        ;;
+    # No known session, try to run it as command
+    *                 ) exec $1;;
+esac

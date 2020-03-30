@@ -1,0 +1,5 @@
+# autostart X on vt1 on login
+if [[ ! $DISPLAY && $XDG_VTNR -eq 1 ]]; then
+  # replace process with startx
+  exec startx
+fi

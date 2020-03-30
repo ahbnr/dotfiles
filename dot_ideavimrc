@@ -1,0 +1,33 @@
+"" Plugins
+" vim-surround
+set surround
+" commentary.vim
+set commentary
+
+set clipboard+=unnamed
+
+" set leader key
+let mapleader=" "
+
+" fast buffer switching shoertcuts
+map <leader>n :tabn<cr>
+map <leader>p :tabp<cr>
+map <leader>d :tabc<cr>  
+
+" disable ex-mode hotkey
+nnoremap Q <Nop>
+
+" j and k shall navigate displayed lines, useful when
+" wrapping is enabled.
+" https://bluz71.github.io/2017/05/15/vim-tips-tricks.html
+nnoremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
+nnoremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
+
+" allow leaving line left or right by pressing movement keys
+set whichwrap+=hl
+
+" search preview
+set incsearch
+" case insensitive search if all characters in search are lower case
+set ignorecase
+set smartcase

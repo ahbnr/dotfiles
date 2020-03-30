@@ -1,0 +1,8 @@
+## External html view (optional)
+text/html; lynx -assume_charset=%{charset} -display_charset=utf-8 -force_html %s; needsterminal;
+
+## Inline html view (standard)
+text/html; lynx -assume_charset=%{charset} -display_charset=utf-8 -dump %s; nametemplate=%s.html; copiousoutput
+
+## open documents with rifle by copying them to a temporary directory first
+application/*; mkdir -p /tmp/mutt \; cp %s /tmp/mutt \; rifle -f F /tmp/mutt/$(basename %s) \; rm /tmp/mutt/$(basename %s) &

@@ -1,0 +1,22 @@
+
+# Remember keys during session. Requires ssh-agent to be running
+AddKeysToAgent yes
+
+# Keep SSH connections alive longer
+#Host *
+#  ServerAliveInterval 120
+
+# Use special keyfile for ahbnr.de VPS
+Host ahbnr.de
+  HostName ahbnr.de
+  IdentityFile ~/.ssh/greenbyteV2_ed25519
+  Port {{ (keepassxc "ahbnr.de ssh port").Password }}
+
+Host deh.duckdns.org
+  HostName deh.duckdns.org
+  Port {{ (keepassxc "deh.duckdns.org ssh port").Password }}
+
+# Arch User Repository user
+Host aur.archlinux.org
+  IdentityFile ~/.ssh/aur
+  User aur

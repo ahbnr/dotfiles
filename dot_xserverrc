@@ -1,0 +1,16 @@
+#!/bin/sh
+
+logdir="$HOME/.local/share/xorg"
+sessionlog="$logdir/Xorg.session.log"
+mkdir -p "$logdir"
+
+# run xorg...
+# ...without listening for X connections on
+#   ... tcp sockets
+#   ... local sockets
+#       (https://wiki.archlinux.org/index.php/Xinit#xserverrc)
+#       (https://tstarling.com/blog/2016/06/x11-security-isolation/)
+# ...on the tty starting it (vt$XDG_VTNR)
+# ...without detaching from the terminal (-keeptty)
+#    ...so that the sessionlog can be captured (> ~/.xorg.log 2>&1)
+exec /usr/bin/X -nolisten tcp -nolisten local "$@" vt$XDG_VTNR > "$sessionlog" 2>&1

@@ -1,0 +1,30 @@
+# FZF Keybindings
+source /usr/share/fzf/key-bindings.zsh
+source /usr/share/fzf/completion.zsh
+
+# Shortcuts
+
+## Folders
+alias surfaceex="/run/media/anton/SurfaceEx/anton/"
+alias sose18="/home/anton/Documents/Studium/SoSe18"
+
+## Commands
+alias gits="git status"
+alias gitc="git commit"
+alias gitp="git push"
+
+alias murder="killall -9 "
+
+alias weechatssh="ssh irc@ahbnr.de -t \"tmux attach -t weechatIrc\""
+
+## Vim exit
+alias :q=exit
+
+# Disable autocorrection
+unsetopt correct
+
+# Syntax highlighting
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# autosuggestions
+source ~/.zsh/zsh-autosuggestions/zsh-autosuggestions.zsh

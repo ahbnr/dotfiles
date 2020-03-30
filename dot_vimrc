@@ -1,0 +1,636 @@
+call plug#begin('~/.vim/plugged')
+
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+Plug 'Konfekt/vim-mutt-aliases', { 'for': 'mail' } " Completion of mail addresses
+Plug 'w0rp/ale', { 'for': 'tex' }
+Plug 'gruvbox-community/gruvbox'
+Plug 'vim-scripts/haskell.vim', {'for': 'haskell'}
+Plug 'ciaranm/securemodelines'
+" Plug 'KeitaNakamura/tex-conceal.vim', {'for': 'tex'}
+Plug 'vim-airline/vim-airline'
+Plug 'ryanoasis/vim-devicons'
+Plug 'tpope/vim-fugitive' " TODO: Coc Replacement
+" Plug 'enomsg/vim-haskellConcealPlus', {'for': 'haskell'}
+Plug 'plasticboy/vim-markdown', {'for': 'markdown'}
+" Plug 'mhinz/vim-signify'
+Plug 'lervag/vimtex', { 'for': 'tex' }
+Plug 'tpope/vim-surround'
+Plug 'honza/vim-snippets'
+Plug 'junegunn/fzf.vim' " TODO Coc Replacement
+" Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+" Plug 'Shougo/neco-syntax'
+" Plug 'wokalski/autocomplete-flow'
+Plug 'HerringtonDarkholme/yats.vim', {'for': 'typescript'}
+" Plug 'mhartington/nvim-typescript'
+" Plug 'deoplete-plugins/deoplete-jedi'
+" Plug 'idris-hackers/idris-vim'
+Plug 'SirVer/ultisnips'
+" Plug 'pbrisbin/vim-syntax-shakespeare'
+Plug 'unblevable/quick-scope'
+Plug 'aklt/plantuml-syntax', {'for': 'plantuml'}
+Plug 'liuchengxu/graphviz.vim', {'for': 'dot'}
+Plug 'editorconfig/editorconfig-vim'
+Plug 'ahbnr/vim-abs'
+Plug 'kshenoy/vim-signature'
+Plug 'udalov/kotlin-vim', {'for': 'kotlin'}
+Plug 'chrisbra/unicode.vim'
+Plug 'rust-lang/rust.vim', {'for': 'rust'}
+
+Plug 'hyhugh/coc-erlang_ls', {'do': 'yarn install --frozen-lockfile'}
+
+Plug '~/.vim/localPlugins/vim-jml'
+
+call plug#end()
+
+
+syntax on
+filetype plugin indent on
+syntax enable
+
+" set leader key
+let mapleader=" "
+let maplocalleader="\\"
+
+" remap Y to copy until end of line
+nnoremap Y y$
+
+" nvim COC
+
+autocmd FileType json syntax match Comment +\/\/.\+$+
+let g:tex_flavor = "latex"
+
+" COC airline integration
+let g:airline#extensions#coc#enabled = 1
+let airline#extensions#coc#error_symbol = ' '
+let airline#extensions#coc#warning_symbol = ' '
+
+" COC Config by @amnifilius/DrCracket
+
+" Use <Tab> and <S-Tab> to navigate the completion list:
+inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+let g:coc_snippet_next = '<tab>'
+let g:coc_snippet_prev = '<s-tab>'
+
+" Fancier status signs
+let g:coc_status_warning_sign = "\uf071 "
+let g:coc_status_error_sign = "\uf05e "
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Config extensions to install
+call coc#add_extension(
+  \ 'coc-ultisnips',
+  \ 'coc-vimlsp',
+  \ 'coc-json',
+  \ 'coc-python',
+  \ 'coc-rust-analyzer',
+  \ 'coc-vimtex',
+  \)
+
+"The highlight used for error text.
+highlight link CocErrorSign GruvboxRedSign
+highlight link CocErrorFloat GruvboxRed
+
+"The highlight used for warning text.
+highlight link CocWarningSign GruvboxYellowSign
+highlight link CocWarningFloat GruvboxYellow
+
+"The highlight used for information text.
+highlight link CocInfoSign GruvboxPurpleSign
+highlight link CocInfoFloat GruvboxPurple
+
+"The highlight used for hint text.
+highlight link CocHintSign GruvboxBlueSign
+highlight link CocHintFloat GruvboxBlue
+
+" You will have bad experience for diagnostic messages when it's default 4000.
+set updatetime=300
+
+" don't give |ins-completion-menu| messages.
+set shortmess+=c
+
+" Use <C-n> and <C-m> to navigate diagnostics
+nmap <silent> <C-n> <Plug>(coc-diagnostic-next)
+nmap <silent> <C-m> <Plug>(coc-diagnostic-prev)
+
+" Remap keys for gotos
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> gu <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Remap for rename current word
+nmap <leader>rn <Plug>(coc-rename)
+
+" Remap for format selected region
+xmap <leader>f  <Plug>(coc-format-selected)
+nmap <leader>f  <Plug>(coc-format-selected)
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
+
+" Use `:Format` to format current buffer
+command! -nargs=0 Format :call CocAction('format')
+
+" Use `:Fold` to fold current buffer
+command! -nargs=? Fold :call CocAction('fold', <f-args>)
+
+" use `:OR` for organize import of current buffer
+command! -nargs=0 OR   :call CocAction('runCommand', 'editor.action.organizeImport')
+
+" Correct comment highlighting of config
+autocmd FileType json syntax match Comment +\/\/.\+$+
+
+" Do CocList stuff
+nnoremap <silent> <leader>cl :<C-u>CocList --number-select<cr>
+nnoremap <silent> <leader>cg :<C-u>CocList --number-select --no-sort --interactive grep -smartcase<cr>
+nnoremap <silent> <leader>cf :<C-u>CocList --number-select --no-sort files<cr>
+nnoremap <silent> <leader>cb :<C-u>CocList --number-select bcommits<cr>
+nnoremap <silent> <leader>cc :<C-u>CocList --number-select commands<cr>
+nnoremap <silent> <leader>co :<C-u>CocList --number-select outline<cr>
+nnoremap <silent> <leader>cs :<C-u>CocList --number-select --interactive symbols<cr>
+nnoremap <silent> <leader>cd :<C-u>CocList --number-select diagnostic<cr>
+
+" Remap for do codeAction of current line
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
+
+" Original config
+"" inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"" inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"" inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+"" inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+"" autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
+"
+"  " Better display for messages
+"  " set cmdheight=2
+"
+"  " You will have bad experience for diagnostic messages when it's default 4000.
+"  set updatetime=300
+"  
+"  " don't give |ins-completion-menu| messages.
+"  set shortmess+=c
+"  
+"  " always show signcolumns
+"  " set signcolumn=yes
+"  
+"  " Use tab for trigger completion with characters ahead and navigate.
+"  function! s:check_back_space() abort
+"    let col = col('.') - 1
+"    return !col || getline('.')[col - 1]  =~# '\s'
+"  endfunction
+"
+"  inoremap <expr> <Tab> pumvisible() ? "\<C-n>" : "\<Tab>"
+"  inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+"  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+"  
+"  " Use <c-space> to trigger completion.
+"  inoremap <silent><expr> <c-space> coc#refresh()
+"  
+"  " Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+"  " Coc only does snippet and additional edit on confirm.
+"  inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+"
+"  inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
+"  autocmd! CompleteDone * if pumvisible() == 0 | if bufname('%') != '[Command Line]' | pclose | endif
+"  
+"  " Use `[c` and `]c` to navigate diagnostics
+"  nmap <silent> [c <Plug>(coc-diagnostic-prev)
+"  nmap <silent> ]c <Plug>(coc-diagnostic-next)
+"  
+"  " Remap keys for gotos
+"  nmap <silent> gd <Plug>(coc-definition)
+"  nmap <silent> gy <Plug>(coc-type-definition)
+"  nmap <silent> gi <Plug>(coc-implementation)
+"  nmap <silent> gr <Plug>(coc-references)
+"  nmap <silent> gu <Plug>(coc-references)
+"  
+"  " Use K to show documentation in preview window
+"  nnoremap <silent> K :call <SID>show_documentation()<CR>
+"  
+"  function! s:show_documentation()
+"    if (index(['vim','help'], &filetype) >= 0)
+"      execute 'h '.expand('<cword>')
+"    else
+"      call CocAction('doHover')
+"    endif
+"  endfunction
+"  
+"  " Highlight symbol under cursor on CursorHold
+"  autocmd CursorHold * silent call CocActionAsync('highlight')
+"  autocmd CursorHoldI * silent call CocActionAsync('showSignatureHelp')
+"  
+"  " Remap for rename current word
+"  nmap <leader>rn <Plug>(coc-rename)
+"  nmap <F6> <Plug>(coc-rename)
+"  
+"  " Remap for format selected region
+"  xmap <leader>f  <Plug>(coc-format-selected)
+"  nmap <leader>f  <Plug>(coc-format-selected)
+"  
+"  augroup mygroup
+"    autocmd!
+"    " Setup formatexpr specified filetype(s).
+"    autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+"    " Update signature help on jump placeholder
+"    autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+"  augroup end
+"  
+"  " Remap for do codeAction of selected region, ex: `<leader>aap` for current paragraph
+"  xmap <leader>a  <Plug>(coc-codeaction-selected)
+"  nmap <leader>a  <Plug>(coc-codeaction-selected)
+"  
+"  " Remap for do codeAction of current line
+"  nmap <leader>ac  <Plug>(coc-codeaction)
+"  " Fix autofix problem of current line
+"  nmap <leader>qf  <Plug>(coc-fix-current)
+"  
+"  " Use <tab> for select selections ranges, needs server support, like: coc-tsserver, coc-python
+"  " (disabled for now, since <C-i> = <TAB>, and I need to navigate the
+"  " jumplist with <c-i>)
+"  "" nmap <silent> <TAB> <Plug>(coc-range-select)
+"  "" xmap <silent> <TAB> <Plug>(coc-range-select)
+"  "" xmap <silent> <S-TAB> <Plug>(coc-range-select-backword)
+"  
+"  " Use `:Format` to format current buffer
+"  command! -nargs=0 Format :call CocAction('format')
+"  
+"  " Use `:Fold` to fold current buffer
+"  command! -nargs=? Fold :call     CocAction('fold', <f-args>)
+"  
+"  " use `:OR` for organize import of current buffer
+"  command! -nargs=0 OR   :call     CocAction('runCommand', 'editor.action.organizeImport')
+"  
+"  " Add status line support, for integration with other plugin, checkout `:h coc-status`
+"  " set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+"  
+"  " Using CocList
+"  " Show all diagnostics
+"  nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+"  " Manage extensions
+"  nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+"  " Show commands
+"  nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+"  " Find symbol of current document
+"  nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+"  " Search workspace symbols
+"  nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+"  " Do default action for next item.
+"  nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+"  " Do default action for previous item.
+"  nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+"  " Resume latest coc list
+"  nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
+
+" vim surround settings
+" In TeX, add surround 'm' for \(...\)
+autocmd FileType tex let b:surround_109 = "\\(\r\\)"
+
+" In TeX, don't insert two spaces after a period when autoformatting
+" or joining lines:
+autocmd FileType tex set nojoinspaces
+
+" disable ex-mode hotkey
+nnoremap Q <Nop>
+
+" j and k shall navigate displayed lines, useful when
+" wrapping is enabled.
+" https://bluz71.github.io/2017/05/15/vim-tips-tricks.html
+nnoremap <expr> j v:count ? (v:count > 5 ? "m'" . v:count : '') . 'j' : 'gj'
+nnoremap <expr> k v:count ? (v:count > 5 ? "m'" . v:count : '') . 'k' : 'gk'
+
+" map shift-tab to detab
+nnoremap <S-Tab> <<
+inoremap <S-Tab> <C-d>
+
+" fzf as replacement for ctrl-p
+"" by https://github.com/euclio/vimrc/blob/master/plugins.vim
+nnoremap <c-p> :Files<cr>
+nnoremap <c-b> :Buffers<cr>
+nnoremap <c-f> :Rg<cr>
+nnoremap <c-h> :Helptags<cr>
+augroup fzf
+  autocmd!
+  autocmd! FileType fzf
+  autocmd  FileType fzf set laststatus=0 noshowmode noruler
+    \| autocmd BufLeave <buffer> set laststatus=2 showmode ruler
+augroup END
+
+" close fzf split with escape
+" by DrCracket
+autocmd FileType fzf tnoremap <silent> <Esc> <C-c>
+
+" cd into specified directory and launch ripgrep
+function RgWithPath(bang, ...)
+    let path = get(a:000, 0, ".")
+    let terms = a:000[1:]
+    call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case "
+    \.shellescape(join(terms, " "))." ".path, 1, a:bang)
+endfunction
+command! -bang -nargs=* Rgp  call RgWithPath(<bang>0, <f-args>)
+
+" allow leaving line left or right by pressing movement keys
+set whichwrap+=hl
+
+" enable hidden buffers: Changing the current buffer doesn't
+" require saving then
+set hidden
+
+" enable latex compilation
+let g:vimtex_compiler_enabled=1
+let g:vimtex_compiler_progname='nvr' " set to neovim-remote for SyncTeX
+
+" dont manipulate indentation in latex documents
+let g:vimtex_indent_enabled=0
+
+" single shot compile latex on F5
+autocmd FileType tex nnoremap <F5> :VimtexCompileSS <RETURN>
+" view current pdf section on F7 (latex)
+autocmd FileType tex nnoremap <F7> :VimtexView <RETURN>
+
+" set up PDF viewer (qpdfview)
+let g:vimtex_view_general_viewer = 'qpdfview'
+let g:vimtex_view_general_options
+  \ = '--unique @pdf\#src:@tex:@line:@col'
+let g:vimtex_view_general_options_latexmk = '--unique'
+
+" don't open the quickfix window automatically
+let g:vimtex_quickfix_mode = 0
+
+" QuickScope plugin
+" use gruvbox bg colors to distinguish marked characters
+" (stolen from @amnifilius/DrCracket https://gitlab.com/amnifilius/dotfiles/blob/master/config/nvim/init.vim)
+augroup qs_colors
+  autocmd!
+  autocmd ColorScheme * highlight QuickScopePrimary guibg='#504945'
+  autocmd ColorScheme * highlight QuickScopeSecondary guibg='#3c3836'
+augroup END
+
+" vimtex airline integration
+let g:airline#extensions#vimtex#enabled = 1
+let g:airline#extensions#vimtex#continuous = "ﰌ"
+let g:airline#extensions#vimtex#compiled = "ﰌ₁"
+let g:airline#extensions#vimtex#viewer = ""
+let g:airline#extensions#vimtex#left = ""
+let g:airline#extensions#vimtex#right = ""
+let g:airline#extensions#vimtex#sub_main = ""
+let g:airline#extensions#vimtex#sub_local = ""
+
+" fast buffer switching shoertcuts
+map <leader>n :bn<cr>
+map <leader>p :bp<cr>
+map <leader>d :bd<cr>  
+
+" interpret .jrag/jadd (JastAdd) as java files
+autocmd BufNewFile,BufRead *.jrag   set syntax=java
+autocmd BufNewFile,BufRead *.jadd   set syntax=java
+
+" interpret .cls as tex
+autocmd BufNewFile,BufRead *.cls   set syntax=tex
+
+" 2 spaces instead of tab 
+set tabstop=2
+set shiftwidth=2
+set expandtab
+"set softtabstop=2
+set softtabstop=0
+set smarttab
+
+" Center Cursor
+augroup VCenterCursor
+  au!
+  au BufEnter,WinEnter,WinNew,VimResized *,*.*
+        \ let &scrolloff=winheight(win_getid())/2-1
+augroup END
+
+" hybrid line numbers
+" https://jeffkreeftmeijer.com/vim-number/
+set number relativenumber
+
+" show matching brackets
+set showmatch
+
+" mark 80th column
+set colorcolumn=80
+
+" improve performance by modifying syntax highlighting options
+syntax sync minlines=256
+" no syntax highlighting on very long lines
+" https://bluz71.github.io/2017/05/15/vim-tips-tricks.html
+set synmaxcol=200
+
+" https://stackoverflow.com/a/26578161
+" Indents word-wrapped lines as much as the 'parent' line
+set wrap
+set breakindent
+set breakindentopt=shift:1
+set showbreak=↪\ 
+set linebreak
+" Ensures word-wrap does not split words
+set formatoptions=l
+set lbr
+
+
+" no automatic continuation of comments
+autocmd BufNewFile,BufRead * setlocal formatoptions-=ro 
+
+" search preview
+set incsearch
+set inccommand=nosplit
+" case insensitive search if all characters in search are lower case
+set ignorecase
+set smartcase
+
+" spell checking
+setlocal spell spelllang=de_de,en_us
+autocmd FileType tex setlocal spell spelllang=de_de,en_us
+autocmd FileType haskell setlocal nospell
+
+" Trigger configuration. Do not use <tab> if you use https://github.com/Valloric/YouCompleteMe.
+let g:UltiSnipsExpandTrigger="<C-s>"
+let g:UltiSnipsJumpForwardTrigger="<C-j>"
+let g:UltiSnipsJumpBackwardTrigger="<C-k>"
+
+" terminal on F3 by DrCracket
+nnoremap <F3> :call TermOpen()<cr>
+inoremap <F3> <C-\><C-N>:call TermOpen()<cr>
+tnoremap <F3> <C-\><C-N>:call TermOpen()<cr>
+
+function! TermOpen()
+"		:execute "normal \<c-w>l\<c-w>j"
+        :tabe
+		:terminal
+		:normal i
+endfunction
+
+" Exit terminals with ESC
+tnoremap <Esc> <C-\><C-n>
+
+" undo tree toggle (plugin) on F4
+nnoremap <F4> :UndotreeToggle<cr>
+
+" ale error jumping
+nmap <silent> <C-k> <Plug>(ale_previous_wrap)
+nmap <silent> <C-j> <Plug>(ale_next_wrap)
+
+" ale airline integration
+let g:airline#extensions#ale#enabled = 1
+let g:ale_sign_warning = ''
+let g:ale_sign_error = ''
+let g:ale_sign_info = ''
+
+" Only enable ale for tex. See also vim-plug options above
+" Dont automatically lint on text change in .tex files.
+"  also dont lint on leaving insert mode.
+" This undesireable, since with vimtex, .tex files are usually automatically
+" rebuilt upon saving them.
+let g:ale_pattern_options = {
+\   '.*$': {'ale_enabled': 0},
+\   '.*\.tex$': {
+\     'ale_enabled': 1,
+\     'ale_lint_on_text_changed': 'never',
+\     'ale_lint_on_insert_leave': 0,
+\   }
+\}
+
+" ALE latex checkers
+let g:ale_writegood_options = '--no-tooWordy --no-passive' " conflicts with LaTeX's 'enumerate'
+
+"" airline
+" dont show whitespace checks
+let g:airline#extensions#whitespace#enabled = 0
+
+" dont show spell info
+let g:airline_detect_spell=0
+
+" enable only the following extensions:
+let g:airline_extensions = ['tabline', 'ale', 'coc', 'vimtex']
+
+"" Markdown
+" Enable latex math syntax inside markdown
+let g:vim_markdown_math = 1
+" use 2 spaces for indent of lists
+let g:vim_markdown_new_list_item_indent = 2
+" disable folding
+let g:vim_markdown_folding_disabled = 1
+" disable automatic bulletpoints
+let g:vim_markdown_auto_insert_bullets = 0
+let g:vim_markdown_new_list_item_indent = 0
+
+" disable haskell linting -> use ghci(d) instead!
+let g:ale_linters = {'haskell': [], 'typescript': ['tslint']}
+let g:ale_typescript_tslint_config_path = '.tslint.json'
+
+" Pointfree haskell formatter: Presse gq on selection
+autocmd BufEnter *.hs set formatprg=pointfree\ --stdin
+
+" solution for stack projects: Live stack recompilation
+if has('terminal') || has('nvim')
+  command StackCheck :term stack build --fast --file-watch
+endif
+
+" haskell concealing settings
+let hscoptions="*T"
+
+" true colors
+
+"Credit joshdick
+"Use 24-bit (true-color) mode in Vim/Neovim when outside tmux.
+"If you're using tmux version 2.2 or later, you can remove the outermost $TMUX check and use tmux's 24-bit color support
+"(see < http://sunaku.github.io/tmux-24bit-color.html#usage > for more information.)
+if (has("nvim"))
+"For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+endif
+"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+if (has("termguicolors"))
+  set termguicolors
+endif
+
+" support for glyphs etc.
+set encoding=UTF-8
+
+set background=dark
+let g:gruvbox_italic=1
+colorscheme gruvbox
+
+"" Airline
+set laststatus=2
+set noshowmode
+" nice airline symbols
+let g:airline_powerline_fonts = 1
+" nice tabline
+let g:airline#extensions#tabline#enabled = 1
+" show tabline only if there is more than one tab
+let g:airline#extensions#tabline#tab_min_count = 2
+" dont show buffers, if there is only 1 tab
+let g:airline#extensions#tabline#buffer_min_count = 2
+" dont show close button
+let g:airline#extensions#tabline#show_close_button = 0
+
+" Better vimcryption
+autocmd BufRead,BufNewFile *.vcr call SetCryptOptions()
+function SetCryptOptions()
+  setlocal cm=blowfish2
+  setlocal viminfo=
+  setlocal nobackup
+  setlocal nowritebackup
+endfunction
+
+" gvim only settings
+if has('gui_running')
+  set guioptions-=m  "remove menu bar
+  set guioptions-=T  "remove toolbar
+  set guioptions-=r  "remove right-hand scroll bar
+  set mouse=c        "remove mouse support 
+endif
+
+" secure modelines
+"" restrict modelines to specific options
+let g:secure_modelines_allowed_items = [ 
+    \ "textwidth",   "tw", 
+    \ "softtabstop", "sts", 
+    \ "tabstop",     "ts", 
+    \ "shiftwidth",  "sw", 
+    \ "expandtab",   "et",   "noexpandtab", "noet", 
+    \ "filetype",    "ft", 
+    \ "foldmethod",  "fdm", 
+    \ "readonly",    "ro",   "noreadonly", "noro", 
+    \ "rightleft",   "rl",   "norightleft", "norl",
+    \ "spell",
+    \ "spelllang"
+  \ ]
+
+" vim-signify symbols
+let g:signify_sign_add               = ''
+let g:signify_sign_delete            = ''
+let g:signify_sign_delete_first_line = '‾'
+let g:signify_sign_change            = ''
+
+"" vim-signify airline integration
+" dont show summary of changes
+let g:airline#extensions#hunks#enabled = 0
