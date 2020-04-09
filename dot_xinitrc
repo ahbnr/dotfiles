@@ -66,7 +66,7 @@ session=${1:-dwm}
 
 case $session in
     dwm               ) export _JAVA_AWT_WM_NONREPARENTING=1 # Fix displaying Java applications
-                        ~/Documents/Projects/slstatus/slstatus/slstatus &
+                        slstatus & # status monitor
                         juiced -d # Warn about low battery levels, requires notification daemon
                         feh --bg-scale ~/Pictures/Wallpaper/gruv0.jpg
                         exec dwm 2> ~/.dwm.log
